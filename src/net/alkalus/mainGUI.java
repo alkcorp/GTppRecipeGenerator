@@ -160,7 +160,7 @@ public class mainGUI {
 		frame.getContentPane().add(lblAmount_1, "2, 8, left, default");
 		
 		aOutputAmount = new JTextField();
-		aOutputAmount.setText("1");
+		aOutputAmount.setText("1 : 1");
 		frame.getContentPane().add(aOutputAmount, "4, 8, fill, default");
 		aOutputAmount.setColumns(10);
 		
@@ -296,23 +296,32 @@ public class mainGUI {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				String aRecipe = 
-				"//Recipe for "+aOutputName.getText()+ StringUtils.linebreak() + 
-				StringUtils.linebreak() +
-				"CORE.RA.addSixSlotAssemblingRecipe(" + StringUtils.linebreak() +				
-				"new ItemStack[] {" + StringUtils.linebreak() +
-
-				txtI1.getText() + "(!GTNH ? "+txtA1.getText()+")," + StringUtils.linebreak() +
-				txtI2.getText() + "(!GTNH ? "+txtA2.getText()+")," + StringUtils.linebreak() +
-				txtI3.getText() + "(!GTNH ? "+txtA3.getText()+")," + StringUtils.linebreak() +
-				txtI4.getText() + "(!GTNH ? "+txtA4.getText()+")," + StringUtils.linebreak() +
-				txtI5.getText() + "(!GTNH ? "+txtA5.getText()+")," + StringUtils.linebreak() +
-				txtI6.getText() + "(!GTNH ? "+txtA6.getText()+")," + StringUtils.linebreak() +				
 				
-				"}, // Input Items" + StringUtils.linebreak() +					
-				"FluidUtils.getFluidStack("+fluidInputName.getText()+", "+FluidInputAmount.getText()+"), // Fluid Input" + StringUtils.linebreak() +					
-				""+aOutputName.getText()+ " (!GTNH ? "+aOutputAmount.getText()+"), // Output Item" + StringUtils.linebreak() +					
-				""+aTime.getText()+", // Time in Ticks"+StringUtils.linebreak() +
+				
+				
+				
+				
+				
+				
+				
+				
+				String aRecipe = 
+				"//Recipe for "+aOutputName.getText()+ linebreak() + 
+				linebreak() +
+				"CORE.RA.addSixSlotAssemblingRecipe(" + linebreak() +				
+				"new ItemStack[] {" + linebreak() +
+
+				getItemType(txtI1, txtA1) +
+				getItemType(txtI2, txtA2) +
+				getItemType(txtI3, txtA3) +
+				getItemType(txtI4, txtA4) +
+				getItemType(txtI5, txtA5) +
+				getItemType(txtI6, txtA6) +				
+				
+				"}, // Input Items" + linebreak() +					
+				"FluidUtils.getFluidStack("+fluidInputName.getText()+", (!GTNH ? "+FluidInputAmount.getText()+")), // Fluid Input" + linebreak() +					
+				""+aOutputName.getText()+ " (!GTNH ? "+aOutputAmount.getText()+"), // Output Item" + linebreak() +					
+				""+aTime.getText()+", // Time in Ticks"+linebreak() +
 				""+aEuT.getText()+"); // Eu/t";				
 				txtpnOutput.setText("");
 				txtpnOutput.setText(aRecipe);
@@ -323,5 +332,40 @@ public class mainGUI {
 		});
 		frame.getContentPane().add(btnGenerate, "2, 56");
 	}
+	
+	public static String linebreak() {
+        return System.getProperty("line.separator");
+    }
+	
+	final String fqrnName = "simpleMetaStack("; //name, meta, size
+	final String odName = "getItemStackOfAmountFromOreDict("; //name, size
 
+	String getItemType(JTextField aData, JTextField aAmount) {
+		
+		String suffix =  ", (!GTNH ? "+aAmount.getText()+")), "+linebreak();
+		
+		
+		if (aData.getText().contains(":")) {
+			String[] aSplit = aData.getText().split(":");
+			if (aSplit.length == 2) {
+				return fqrnName + "\"" + aSplit[0]+ ":" + aSplit[1] + "\"" + ", 0"+suffix;
+			}
+			else if (aSplit.length == 2) {
+				return fqrnName + "\"" + aSplit[0]+ ":" + aSplit[1] + "\"" + ", "+aSplit[2]+suffix;				
+			}
+			else {
+				return "BAD SYNTAX";
+				
+			}			
+		}
+		else {
+			
+			if (aData.getText().startsWith("CI.")) {
+				return odName+aData.getText()+suffix;
+			}
+			
+			return odName+"\""+aData.getText()+ "\"" +suffix;
+		}
+	}
+	
 }
